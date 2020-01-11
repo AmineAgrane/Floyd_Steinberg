@@ -1,0 +1,89 @@
+%PROJET
+%Algorithme de FLoyd Steinberg
+%AGRANE Amine KHELFANE Lydia
+
+clear all;
+close all;
+ 
+A=imread('lena.jpg');
+B=A;
+
+
+subplot(2,3,1);
+imshow(uint8(A));
+title('Image originale');
+
+subplot(2,3,2);
+histogram(A);
+
+
+[NL,NC]=size(A);
+
+%Application de l'algorithme de Floyd-Steinberg
+for i=2:NL-1
+    for j=2:NC-1
+ 
+        ancien_pixel= B(i,j);
+        
+        if (ancien_pixel>=0 & ancien_pixel<=63)
+            nouveau_pixel=0;          
+        
+        elseif(ancien_pixel>=64 & ancien_pixel<=127)
+            nouveau_pixel=64;
+    
+        
+        elseif(ancien_pixel>=128 & ancien_pixel<=191)
+            nouveau_pixel=128;
+        
+        
+        elseif (ancien_pixel>=191 & ancien_pixel<=255)
+            nouveau_pixel=255;
+        end  
+        
+         B(i,j)=nouveau_pixel;
+    end 
+end
+
+subplot(2,3,2);
+imshow(uint8(B));
+title('Image après Quantification');
+
+subplot(2,3,5);
+histogram(B);
+
+
+%Application de l'algorithme de Floyd-Steinberg
+for i=2:NL-1
+    for j=2:NC-1
+ 
+        ancien_pixel= A(i,j);
+        
+        if (ancien_pixel>=0 & ancien_pixel<=63)
+            nouveau_pixel=0;                  
+        elseif(ancien_pixel>=64 & ancien_pixel<=127)
+            nouveau_pixel=64;
+        elseif(ancien_pixel>=128 & ancien_pixel<=191)
+            nouveau_pixel=128;
+        elseif (ancien_pixel>=191 & ancien_pixel<=255)
+            nouveau_pixel=255;
+        end  
+        
+         A(i,j)=nouveau_pixel;
+         erreur_quantification=(ancien_pixel- nouveau_pixel);
+         A(i+1,j)=A(i+1,j)+(7/16)* (erreur_quantification);
+         A(i-1,j+1)=A(i-1,j+1)+ (7/16)*( erreur_quantification);
+         A(i,j+1)=A(i,j+1)+ (7/16)*( erreur_quantification);
+         A(i+1,j+1)=A(i+1,j+1)+ (7/16)*( erreur_quantification); 
+    end 
+end
+
+
+
+subplot(1,2,2);
+imshow(uint8(A));
+title('Image après application de l''algorithme de Floyd-Steinberg');
+
+subplot(2,3,6);
+histogram(A);
+
+
